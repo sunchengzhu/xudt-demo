@@ -21,7 +21,6 @@ const fetchXudtBalance = async (address: string, xudtTypeScript: CKBComponents.S
     type: xudtTypeScript,
   });
 
-
   const totalAmount = cells.reduce((acc, cell) => {
     const result = hexToXudtData(cell.outputData);
     const amount: bigint = BigInt(result.AMOUNT || '0');  // 使用解析后的 AMOUNT，若无则为 '0'
