@@ -4,6 +4,6 @@
 
 ```bash
 npm install
-npx tsx get-rusd.ts
+npx tsx fetch-rusd-balance.ts
 ```
 
