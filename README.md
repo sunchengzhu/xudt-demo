@@ -1,6 +1,6 @@
 # xudt-demo
 
-upda## Usage
+## Usage
 
 ```bash
 npm install
