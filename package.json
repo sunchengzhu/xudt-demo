@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@nervosnetwork/ckb-sdk-utils": "^0.109.4",
+    "@rgbpp-sdk/ckb": "^0.6.0",
+    "bignumber.js": "^9.1.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "@types/node": "^22.10.7"
+  }
+}
