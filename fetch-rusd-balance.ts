@@ -55,9 +55,9 @@ const hexToXudtData = (v: string) => {
 async function fetchAndLogBalances() {
   try {
     const balance1 = await fetchXudtBalance(ckb1Address, xudtTypeScript);
-    console.log(`ckb1 RUSD balance: ${balance1}`);
+    console.log(`${ckb1Address} RUSD balance: ${balance1}`);
     const balance2 = await fetchXudtBalance(ckb2Address, xudtTypeScript);
-    console.log(`ckb2 RUSD balance: ${balance2}`);
+    console.log(`${ckb2Address} RUSD balance: ${balance2}`);
   } catch (error) {
     console.error('Error fetching RUSD balance:', error);
   }
