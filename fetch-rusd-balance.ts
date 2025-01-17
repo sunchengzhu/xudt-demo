@@ -3,7 +3,8 @@ import { collector } from "./env";
 import BigNumber from 'bignumber.js'
 
 
-const address = 'ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqfy4w0gqjsm0ulnq0l4ft6hu6spztrj72sjtcnx4';
+const ckb1Address = 'ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqfy4w0gqjsm0ulnq0l4ft6hu6spztrj72sjtcnx4';
+const ckb2Address = 'ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqwgkulmcyxtv2vgcmgatupg2r02k8n4mjcmm9f5m';
 
 // https://testnet.explorer.nervos.org/xudt/0x45b32a2bc4285d0a09678eb11960ddc8707bc2779887a09d482e9bfe9a2cdf52
 const xudtTypeScript: CKBComponents.Script = {
@@ -51,7 +52,15 @@ const hexToXudtData = (v: string) => {
   }
   return res
 }
+async function fetchAndLogBalances() {
+  try {
+    const balance1 = await fetchXudtBalance(ckb1Address, xudtTypeScript);
+    console.log(`ckb1 RUSD balance: ${balance1}`);
+    const balance2 = await fetchXudtBalance(ckb2Address, xudtTypeScript);
+    console.log(`ckb2 RUSD balance: ${balance2}`);
+  } catch (error) {
+    console.error('Error fetching RUSD balance:', error);
+  }
+}
 
-fetchXudtBalance(address, xudtTypeScript)
-  .then(balance => console.log(`RUSD balance: ${balance}`))
-  .catch(error => console.error('Error fetching RUSD balance:', error));
+fetchAndLogBalances();
