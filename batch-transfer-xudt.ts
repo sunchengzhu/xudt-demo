@@ -61,7 +61,7 @@ const leToBe = (v: string) => {
 const hexToXudtData = (v: string) => {
   const amount = v.slice(0, 34);
   const res: Partial<Record<'AMOUNT' | 'DATA', string>> = {
-    AMOUNT: new BigNumber(leToBe(amount)).toFormat({ groupSeparator: '' }),
+    AMOUNT: new BigNumber(leToBe(amount)).toFormat({groupSeparator: ''}),
   };
   const data = v.slice(34);
   if (data) {
@@ -131,7 +131,7 @@ const transferXudt = async ({
   }
 
   // 调用实际转账逻辑
-  await doXudtTransfer({ xudtType, receivers });
+  await doXudtTransfer({xudtType, receivers});
 };
 
 // ========== 实际批量转账实现，复用你的原 transferXudt 代码 ==========
@@ -142,7 +142,8 @@ interface ActualTransferParams {
     transferAmount: bigint;
   }[];
 }
-const doXudtTransfer = async ({ xudtType, receivers }: ActualTransferParams) => {
+
+const doXudtTransfer = async ({xudtType, receivers}: ActualTransferParams) => {
   const fromLock = addressToScript(ckbAddress);
 
   const xudtCells = await collector.getCells({
@@ -157,7 +158,7 @@ const doXudtTransfer = async ({ xudtType, receivers }: ActualTransferParams) => 
     .reduce((prev, current) => prev + current, BigInt(0));
 
   let sumXudtOutputCapacity = receivers
-    .map(({ toAddress }) => calculateUdtCellCapacity(addressToScript(toAddress)))
+    .map(({toAddress}) => calculateUdtCellCapacity(addressToScript(toAddress)))
     .reduce((prev, current) => prev + current, BigInt(0));
 
   const {
@@ -171,12 +172,12 @@ const doXudtTransfer = async ({ xudtType, receivers }: ActualTransferParams) => 
   let actualInputsCapacity = sumXudtInputsCapacity;
   let inputs = udtInputs;
 
-  const outputs: CKBComponents.CellOutput[] = receivers.map(({ toAddress }) => ({
+  const outputs: CKBComponents.CellOutput[] = receivers.map(({toAddress}) => ({
     lock: addressToScript(toAddress),
     type: xudtType,
     capacity: append0x(calculateUdtCellCapacity(addressToScript(toAddress)).toString(16)),
   }));
-  const outputsData = receivers.map(({ transferAmount }) => append0x(u128ToLe(transferAmount)));
+  const outputsData = receivers.map(({transferAmount}) => append0x(u128ToLe(transferAmount)));
 
   if (sumAmount > sumTransferAmount) {
     const xudtChangeCapacity = calculateUdtCellCapacity(fromLock);
@@ -199,11 +200,11 @@ const doXudtTransfer = async ({ xudtType, receivers }: ActualTransferParams) => 
     }
     emptyCells = emptyCells.filter((cell) => !cell.output.type);
     const needCapacity = sumXudtOutputCapacity - sumXudtInputsCapacity;
-    const { inputs: emptyInputs, sumInputsCapacity: sumEmptyCapacity } = collector.collectInputs(
+    const {inputs: emptyInputs, sumInputsCapacity: sumEmptyCapacity} = collector.collectInputs(
       emptyCells,
       needCapacity,
       txFee,
-      { minCapacity: MIN_CAPACITY },
+      {minCapacity: MIN_CAPACITY},
     );
     inputs = [...inputs, ...emptyInputs];
     actualInputsCapacity += sumEmptyCapacity;
@@ -216,10 +217,10 @@ const doXudtTransfer = async ({ xudtType, receivers }: ActualTransferParams) => 
   });
   outputsData.push('0x');
 
-  const emptyWitness = { lock: '', inputType: '', outputType: '' };
+  const emptyWitness = {lock: '', inputType: '', outputType: ''};
   const witnesses = inputs.map((_, index) => (index === 0 ? emptyWitness : '0x'));
 
-  const cellDeps = [getSecp256k1CellDep(isMainnet), ...(await fetchTypeIdCellDeps(isMainnet, { xudt: true }))];
+  const cellDeps = [getSecp256k1CellDep(isMainnet), ...(await fetchTypeIdCellDeps(isMainnet, {xudt: true}))];
 
   const unsignedTx = {
     version: '0x0',
@@ -241,5 +242,5 @@ const doXudtTransfer = async ({ xudtType, receivers }: ActualTransferParams) => 
   const signedTx = collector.getCkb().signTransaction(CKB_PRIVATE_KEY)(unsignedTx);
   const txHash = await collector.getCkb().rpc.sendTransaction(signedTx, 'passthrough');
 
-  console.info(`xUDT asset has been minted or transferred. Transaction hash: ${txHash}`);
+  console.info(`xUDT assets have been successfully transferred. Transaction hash: ${txHash}`);
 };
